@@ -4,6 +4,12 @@ import { DataAccessService } from './services/data-access.service';
 import { DataAccessController } from './controllers/data-access.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ProductsController } from '@/controllers/products.controller';
+import { ProductsService } from '@/services/products.service';
+import { Articulo } from './entities/articulo.entity';
+import { Rubro } from './entities/rubro.entity';
+import { Calibre } from './entities/calibre.entity';
+import { ListaPrecios } from './entities/lista-precios.entity';
 
 const ENV = process.env.NODE_ENV;
 
@@ -28,8 +34,9 @@ const ENV = process.env.NODE_ENV;
         trustServerCertificate: true,
       },
     }),
+    TypeOrmModule.forFeature([Articulo, Rubro, Calibre, ListaPrecios]),
   ],
-  controllers: [DataAccessController],
-  providers: [DataAccessService],
+  controllers: [DataAccessController, ProductsController],
+  providers: [DataAccessService, ProductsService],
 })
 export class AppModule {}

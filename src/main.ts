@@ -14,5 +14,6 @@ async function bootstrap() {
     },
   );
   await app.listen();
+  console.log('Gescom Data Access conectado con redis...123');
 }
 bootstrap();

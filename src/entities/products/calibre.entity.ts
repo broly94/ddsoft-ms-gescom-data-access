@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
-import { Articulo } from './articulo.entity';
+import { Articulo } from '@/entities/products/articulo.entity';
 
 @Entity('Calibre')
 export class Calibre {

@@ -6,9 +6,9 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { Rubro } from './rubro.entity';
-import { Calibre } from './calibre.entity';
-import { ListaPrecios } from './lista-precios.entity';
+import { Rubro } from '@/entities/products/rubro.entity';
+import { Calibre } from '@/entities/products/calibre.entity';
+import { ListaPrecios } from '@/entities/products/lista-precios.entity';
 
 @Entity('Articulo')
 export class Articulo {
@@ -18,7 +18,12 @@ export class Articulo {
   @Column({ type: 'varchar', length: 255 })
   descripcion: string;
 
-  @Column({ name: 'Precio_Costo_SDesc', type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    name: 'Precio_Costo_SDesc',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+  })
   costoSDesc: number;
 
   @Column({ type: 'int' })

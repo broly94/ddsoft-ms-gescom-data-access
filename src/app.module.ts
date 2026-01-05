@@ -6,10 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ProductsController } from '@/controllers/products.controller';
 import { ProductsService } from '@/services/products.service';
-import { Articulo } from './entities/articulo.entity';
-import { Rubro } from './entities/rubro.entity';
-import { Calibre } from './entities/calibre.entity';
-import { ListaPrecios } from './entities/lista-precios.entity';
+import { Articulo } from '@/entities/products/articulo.entity';
+import { Rubro } from '@/entities/products/rubro.entity';
+import { Calibre } from '@/entities/products/calibre.entity';
+import { ListaPrecios } from '@/entities/products/lista-precios.entity';
+import { SellersService } from '@/services/sellers.service';
+import { Vendedor } from '@/entities/sellers/sellers.entity';
+import { Supervisor } from '@/entities/sellers/supervisor.entity';
+import { SellersController } from '@/controllers/sellers.controller';
 
 const ENV = process.env.NODE_ENV;
 
@@ -34,9 +38,16 @@ const ENV = process.env.NODE_ENV;
         trustServerCertificate: true,
       },
     }),
-    TypeOrmModule.forFeature([Articulo, Rubro, Calibre, ListaPrecios]),
+    TypeOrmModule.forFeature([
+      Articulo,
+      Rubro,
+      Calibre,
+      ListaPrecios,
+      Vendedor,
+      Supervisor,
+    ]),
   ],
-  controllers: [DataAccessController, ProductsController],
-  providers: [DataAccessService, ProductsService],
+  controllers: [DataAccessController, ProductsController, SellersController],
+  providers: [DataAccessService, ProductsService, SellersService],
 })
 export class AppModule {}

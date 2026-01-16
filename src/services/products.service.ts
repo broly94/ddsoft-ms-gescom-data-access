@@ -22,7 +22,8 @@ export class ProductsService {
         'a.descripcion AS Descripcion',
         'r.descripcion AS Rubro_Descripcion',
         'a.costoSDesc AS CostoSDesc',
-        'lp.precio_neto AS PrecioFinal',
+        'lp1.precio_neto AS PrecioFinal',
+        'lp3.precio_neto AS InteriorPrecioFinal',
         'a.stock AS Stock',
         'c.descripcion AS Calibre_Descripcion',
         'a.uxbCompra AS UXBCompra',
@@ -30,11 +31,19 @@ export class ProductsService {
       ])
       .leftJoin('a.rubro', 'r')
       .leftJoin('a.calibre', 'c')
+      // JOIN para Lista 1 (Precio Final)
       .leftJoin(
         'a.precios',
-        'lp',
-        'lp.art_codigo = a.codigo AND lp.nro_lista = :nroLista',
-        { nroLista: 1 },
+        'lp1',
+        'lp1.art_codigo = a.codigo AND lp1.nro_lista = :nroLista1',
+        { nroLista1: 1 },
+      )
+      // JOIN para Lista 3 (Interior Precio Final)
+      .leftJoin(
+        'a.precios',
+        'lp3',
+        'lp3.art_codigo = a.codigo AND lp3.nro_lista = :nroLista3',
+        { nroLista3: 3 },
       )
       .where('a.Baja = :baja', { baja: 0 })
       .andWhere('a.linea NOT IN (:...lineas)', { lineas: [5, 6, 7] })

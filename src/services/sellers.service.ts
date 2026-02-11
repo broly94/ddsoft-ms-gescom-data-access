@@ -13,24 +13,15 @@ export class SellersService {
   ) {}
 
   async findActiveSellersBySupervisorIds(
-    supervisorIds: number[],
-  ): Promise<Vendedor[]> {
+    supervisorIds?: number[],
+  ): Promise<any[]> {
     this.logger.log(
-      `Obteniendo vendedores activos para supervisores: ${supervisorIds.join(
-        ', ',
-      )}`,
+      `Obteniendo vendedores activos${supervisorIds ? ` para supervisores: ${supervisorIds.join(', ')}` : ''}`,
     );
-
-    if (!supervisorIds || supervisorIds.length === 0) {
-      this.logger.warn(
-        'No se proporcionaron IDs de supervisor. Retornando array vacío.',
-      );
-      return [];
-    }
 
     try {
       const startTime = Date.now();
-      const sellers = await this.vendedorRepository
+      const queryBuilder = this.vendedorRepository
         .createQueryBuilder('vendedor')
         .leftJoin('vendedor.supervisor', 'supervisor')
         .select([
@@ -40,13 +31,29 @@ export class SellersService {
           'vendedor.activo',
           'supervisor.supervisor_Nombre',
         ])
-        .where('vendedor.supervisor_id IN (:...ids)', { ids: supervisorIds })
-        .andWhere('vendedor.activo = :activo', { activo: true })
-        .getMany();
+        .where('vendedor.activo = :activo', { activo: true });
+
+      if (supervisorIds && supervisorIds.length > 0) {
+        queryBuilder.andWhere('vendedor.supervisor_id IN (:...ids)', { ids: supervisorIds });
+      }
+
+      const rawSellers = await queryBuilder.getMany();
+
+      // Mapeamos a un objeto plano para "limpiar" cualquier metadato de TypeORM
+      // y relaciones circulares que causan ERR_EMPTY_RESPONSE
+      const sellers = rawSellers.map(v => ({
+        codigo: v.codigo,
+        nombre: v.nombre,
+        supervisor_id: v.supervisor_id,
+        activo: v.activo,
+        supervisor: v.supervisor ? {
+          supervisor_Nombre: v.supervisor.supervisor_Nombre
+        } : null
+      }));
 
       const queryTime = Date.now() - startTime;
       this.logger.log(
-        `✅ ${sellers.length} vendedores obtenidos en ${queryTime}ms`,
+        `✅ ${sellers.length} vendedores procesados en ${queryTime}ms`,
       );
       return sellers;
     } catch (error) {

@@ -7,12 +7,13 @@ export class SellersController {
   constructor(private readonly sellersService: SellersService) {}
 
   @MessagePattern({ cmd: 'get_sellers_by_supervisors' })
-  async getSellersBySupervisors(@Payload() data: { supervisorIds: number[] }) {
+  async getSellersBySupervisors(@Payload() data: { supervisorIds?: number[] }) {
+    const idsStr = data?.supervisorIds ? data.supervisorIds.join(', ') : 'todos';
     console.log(
-      `Controlador gescom-data-access: Petición recibida para obtener vendedores por IDs de supervisor: ${data.supervisorIds.join(', ')}`,
+      `Controlador gescom-data-access: Petición recibida para obtener vendedores por IDs de supervisor: ${idsStr}`,
     );
     return this.sellersService.findActiveSellersBySupervisorIds(
-      data.supervisorIds,
+      data?.supervisorIds,
     );
   }
 }
